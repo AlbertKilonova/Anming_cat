@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalipEr Font</title>
+    <style>
+        :root {
+            --primary-color: #4a6cf7;
+            --secondary-color: #f8f9fa;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--text-color);
+            line-height: 1.6;
+            padding-bottom: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .preview-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: var(--secondary-color);
+            border-radius: 8px;
+        }
+        
+        .control-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+        }
+        
+        .preview-area {
+            position: relative;
+            min-height: 200px;
+            padding: 20px;
+            border: 1px dashed var(--border-color);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .font-preview {
+            font-size: 24px;
+            line-height: 1.5;
+            transition: font-size 0.3s;
+            word-wrap: break-word;
+            min-height: 100px;
+        }
+        
+        .font-info {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .size-display {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .size-label {
+            font-weight: 500;
+        }
+        
+        .preview-container {
+            margin-top: 20px;
+        }
+        
+        .preview-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .single-preview {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+        
+        .compare-mode-toggle {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .compare-instructions {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        @media (max-width: 768px) {
+            .control-group {
+                min-width: 100%;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .preview-area {
+                padding: 15px;
+            }
+            
+            .preview-wrapper {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>CalipEr Font</h1>
+            <p>导入字体文件，预览文本</p>
+        </header>
+        
+        <div class="preview-card">
+            <div class="controls">
+                <div class="control-group">
+                    <label for="fontFile1">导入字体-1</label>
+                    <input type="file" id="fontFile1" accept=".ttf,.otf,.woff,.woff2">
+                </div>
+                
+                <div class="control-group" id="fontFile2Container" style="display: none;">
+                    <label for="fontFile2">导入字体-2</label>
+                    <input type="file" id="fontFile2" accept=".ttf,.otf,.woff,.woff2">
+                </div>
+                
+                <div class="control-group">
+                    <label for="textPreview">输入预览文本</label>
+                    <input type="text" id="textPreview" value="CalipEr 预览字体文件 123">
+                </div>
+                
+                <div class="control-group">
+                    <label for="fontSize">字号大小</label>
+                    <div class="size-display">
+                        <span class="size-label">最小: 30px</span>
+                        <input type="range" id="fontSize" min="30" max="150" value="30">
+                        <span class="size-label">最大: 150px</span>
+                    </div>
+                    <span id="fontSizeValue">24px</span>
+                </div>
+            </div>
+            
+            <div class="compare-mode-toggle">
+                <input type="checkbox" id="compareMode">
+                <label for="compareMode">---对比模式</label>
+            </div>
+            
+            <div class="preview-container">
+                <div class="preview-wrapper" id="previewWrapper">
+                    <div class="single-preview">
+                        <div class="preview-area">
+                            <div class="font-preview" id="fontPreview1"></div>
+                            <div class="font-info" id="fontInfo1">[Empty]</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const fontFileInput1 = document.getElementById('fontFile1');
+            const fontFileInput2 = document.getElementById('fontFile2');
+            const fontFile2Container = document.getElementById('fontFile2Container');
+            const fontSizeSlider = document.getElementById('fontSize');
+            const fontSizeValue = document.getElementById('fontSizeValue');
+            const textPreviewInput = document.getElementById('textPreview');
+            const fontPreview1 = document.getElementById('fontPreview1');
+            const fontInfo1 = document.getElementById('fontInfo1');
+            const previewWrapper = document.getElementById('previewWrapper');
+            const compareModeToggle = document.getElementById('compareMode');
+            
+            let currentFontFace1 = null;
+            let currentFontFace2 = null;
+            let fontPreview2 = null;
+            let fontInfo2 = null;
+            
+            // 字号滑块变化
+            fontSizeSlider.addEventListener('input', function() {
+                fontSizeValue.textContent = this.value + 'px';
+                fontPreview1.style.fontSize = this.value + 'px';
+                if (fontPreview2) {
+                    fontPreview2.style.fontSize = this.value + 'px';
+                }
+            });
+            
+            // 预览文本变化
+            textPreviewInput.addEventListener('input', function() {
+                fontPreview1.textContent = this.value;
+                if (fontPreview2) {
+                    fontPreview2.textContent = this.value;
+                }
+            });
+            
+            // 对比模式切换
+            compareModeToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    // 显示导入第二种字体的控件
+                    fontFile2Container.style.display = 'block';
+                    
+                    // 创建第二个预览区域
+                    const newPreviewDiv = document.createElement('div');
+                    newPreviewDiv.className = 'single-preview';
+                    newPreviewDiv.innerHTML = `
+                        <div class="preview-area">
+                            <div class="font-preview" id="fontPreview2"></div>
+                            <div class="font-info" id="fontInfo2">[Empty]</div>
+                        </div>
+                    `;
+                    previewWrapper.appendChild(newPreviewDiv);
+                    fontPreview2 = document.getElementById('fontPreview2');
+                    fontInfo2 = document.getElementById('fontInfo2');
+                    fontPreview2.textContent = textPreviewInput.value;
+                } else {
+                    // 隐藏导入第二种字体的控件
+                    fontFile2Container.style.display = 'none';
+                    
+                    // 移除第二个预览区域
+                    if (fontPreview2) {
+                        fontPreview2.parentNode.parentNode.remove();
+                        fontPreview2 = null;
+                        fontInfo2 = null;
+                    }
+                }
+            });
+            
+            // 导入第一种字体文件
+            fontFileInput1.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const fontData = e.target.result;
+                    
+                    // 创建字体面定义
+                    const fontFace = new FontFace('CustomFont1', `url(${fontData})`);
+                    
+                    // 加载字体
+                    fontFace.load().then(function(loadedFont) {
+                        document.fonts.add(loadedFont);
+                        currentFontFace1 = loadedFont;
+                        
+                        // 更新预览
+                        fontPreview1.style.fontFamily = 'CustomFont1';
+                        
+                        // 显示字体信息
+                        fontInfo1.textContent = `已加载字体: ${file.name}`;
+                    }).catch(function(error) {
+                        console.error('字体加载失败:', error);
+                        fontInfo1.textContent = '字体加载失败，请尝试其他字体文件';
+                    });
+                };
+                
+                reader.readAsDataURL(file);
+            });
+            
+            // 导入第二种字体文件
+            fontFileInput2.addEventListener('change', function(e) {
+                if (!compareModeToggle.checked) {
+                    alert('请先启用对比模式');
+                    return;
+                }
+                
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    const fontData = e.target.result;
+                    
+                    // 创建字体面定义
+                    const fontFace = new FontFace('CustomFont2', `url(${fontData})`);
+                    
+                    // 加载字体
+                    fontFace.load().then(function(loadedFont) {
+                        document.fonts.add(loadedFont);
+                        currentFontFace2 = loadedFont;
+                        
+                        // 更新预览
+                        fontPreview2.style.fontFamily = 'CustomFont2';
+                        
+                        // 显示字体信息
+                        fontInfo2.textContent = `已加载字体: ${file.name}`;
+                    }).catch(function(error) {
+                        console.error('字体加载失败:', error);
+                        fontInfo2.textContent = '字体加载失败，请尝试其他字体文件';
+                    });
+                };
+                
+                reader.readAsDataURL(file);
+            });
+            
+            // 初始设置
+            fontPreview1.textContent = textPreviewInput.value;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalipEr 导航</title>
+    <style>
+        a {
+            text-decoration: none; /* 去掉链接的下滑线 */
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f0f2f5; /* 蓝灰色背景 */
+            color: #334455; /* 深蓝色文字 */
+        }
+        
+        .header {
+            background-color: #334455; /* 深蓝色头部背景 */
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.6rem;
+        }
+        
+        .nav-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: left;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-left {
+            flex: 2;
+        }
+        
+        .card-right {
+            flex: 1;
+            text-align: right;
+        }
+        
+        .card-title {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #334455;
+        }
+        
+        .card-description {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .nav-link {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>CalipEr</h1>
+    </header>
+    
+    <div class="nav-container">
+        <a href="other\介绍.html" target="_blank">
+            <div class="nav-card">
+                <div class="card-left">
+                    <div class="card-title">CalipEr介绍</div>
+                    <div class="card-description">CalipEr 主页，介绍CalipEr</div>
+                </div>
+                <div class="card-right">
+                    <div class="card-description">详细介绍</div>
+                </div>
+            </div>
+        </a>
+        
+        <a href="other/CalipEr QR & Barcode Generator.html" target="_blank">
+            <div class="nav-card">
+                <div class="card-left">
+                    <div class="card-title">二维码 条形码生成</div>
+                    <div class="card-description">将文字或链接转换成二维码和条形码</div>
+                </div>
+                <div class="card-right">
+                    <div class="card-description">实用工具</div>
+                </div>
+            </div>
+        </a>
+        
+        <a href="other/CalipEr video.html" target="_blank">
+            <div class="nav-card">
+                <div class="card-left">
+                    <div class="card-title">CalipEr视频播放器</div>
+                    <div class="card-description">播放视频 不支持手机</div>
+                </div>
+                <div class="card-right">
+                    <div class="card-description">实用工具</div>
+                </div>
+            </div>
+        </a>
+        
+        <a href="other/计算器.html" target="_blank">
+            <div class="nav-card">
+                <div class="card-left">
+                    <div class="card-title">CalipEr计算器</div>
+                    <div class="card-description">计算简单的算式</div>
+                </div>
+                <div class="card-right">
+                    <div class="card-description">实用工具</div>
+                </div>
+            </div>
+        </a>
+        
+        <a href="other/贪吃蛇.html" target="_blank">
+            <div class="nav-card">
+                <div class="card-left">
+                    <div class="card-title">CalipEr贪吃蛇</div>
+                    <div class="card-description">仿经典贪吃蛇</div>
+                </div>
+                <div class="card-right">
+                    <div class="card-description">趣味游戏</div>
+                </div>
+            </div>
+        </a>
+
+        <!-- 新添加的卡片 -->
+        <a href="other/CalipEr Color.html" target="_blank">
+            <div class="nav-card">
+                <div class="card-left">
+                    <div class="card-title">CalipEr Color</div>
+                    <div class="card-description">生成各种好看的色卡</div>
+                </div>
+                <div class="card-right">
+                    <div class="card-description">实用工具</div>
+                </div>
+            </div>
+        </a>
+
+        <!-- 新添加的卡片 -->
+        <a href="other/CalipEr html.html" target="_blank">
+            <div class="nav-card">
+                <div class="card-left">
+                    <div class="card-title">CalipEr HTML</div>
+                    <div class="card-description">HTML 代码编辑与预览工具</div>
+                </div>
+                <div class="card-right">
+                    <div class="card-description">实用工具</div>
+                </div>
+            </div>
+        </a>
+    </div>
+</body>
+</html>

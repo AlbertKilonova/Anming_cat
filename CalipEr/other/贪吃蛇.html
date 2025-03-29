@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>CalipEr贪吃蛇</title>
+  <style>
+    * { box-sizing: border-box; touch-action: manipulation; }
+    body { 
+      margin: 0; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      background-color: #2c3e50; 
+      font-family: Arial, sans-serif; 
+      color: white; 
+    }
+    #game-ui { text-align: center; margin: 10px 0; }
+    button { 
+      padding: 12px 24px; 
+      margin: 0 5px; 
+      border: none; 
+      border-radius: 25px; 
+      background: #3498db; 
+      color: white; 
+      font-size: 16px; 
+      cursor: pointer; 
+      transition: background 0.3s; 
+    }
+    button:hover { background: #2980b9; }
+    #game-container {
+      position: relative; 
+      width: 90vw; 
+      height: 90vw; 
+      max-width: 400px; 
+      max-height: 400px;
+      border: 2px solid #ecf0f1; 
+      background-color: #34495e; 
+      touch-action: none;
+    }
+    .snake-segment {
+      position: absolute; 
+      width: 6%; 
+      height: 6%; 
+      background-color: #2ecc71;
+      border-radius: 15%;
+    }
+    .food {
+      position: absolute; 
+      width: 6%; 
+      height: 6%; 
+      background-color: #e74c3c;
+      border-radius: 50%;
+    }
+    #score-board { font-size: 20px; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <div id="game-ui">
+    <div id="score-board">得分: <span id="score">0</span> | 最高: <span id="highscore">0</span></div>
+    <button id="startBtn">开始游戏</button>
+    <button id="restartBtn" style="display: none;">重新开始</button>
+  </div>
+  <div id="game-container">
+    <!-- 蛇头元素作为蛇的第一个分段 -->
+    <div id="snake" class="snake-segment"></div>
+    <div id="food" class="food"></div>
+  </div>
+  <script>
+    const food = document.getElementById('food');
+    const container = document.getElementById('game-container');
+    const startBtn = document.getElementById('startBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const scoreElement = document.getElementById('score');
+    const highscoreElement = document.getElementById('highscore');
+
+    let SPEED = 150; 
+    let CELL_SIZE = 0;
+    let gameActive = false;
+    let direction = 'right';
+    let score = 0;
+    let highscore = localStorage.getItem('snakeHighScore') || 0;
+    let snakeSegments = [];
+    let snakeSegmentElements = [];
+
+    let lastFrameTime = 0;
+
+    function initGame() {
+      CELL_SIZE = Math.floor(container.offsetWidth * 0.06);
+
+      snakeSegments = [];
+      for (let i = 0; i < 3; i++) {
+         snakeSegments.push({ x: CELL_SIZE * (5 - i), y: CELL_SIZE * 5 });
+      }
+
+      let snakeHeadElem = document.getElementById('snake');
+      snakeHeadElem.style.left = snakeSegments[0].x + 'px';
+      snakeHeadElem.style.top = snakeSegments[0].y + 'px';
+      snakeSegmentElements = [snakeHeadElem];
+
+      const extraSegments = container.querySelectorAll('.snake-segment:not(#snake)');
+      extraSegments.forEach(seg => seg.remove());
+      for (let i = 1; i < snakeSegments.length; i++) {
+         let segElem = document.createElement('div');
+         segElem.classList.add('snake-segment');
+         segElem.style.left = snakeSegments[i].x + 'px';
+         segElem.style.top = snakeSegments[i].y + 'px';
+         container.appendChild(segElem);
+         snakeSegmentElements.push(segElem);
+      }
+
+      direction = 'right';
+      score = 0;
+      updateScore();
+      spawnFood();
+      
+      gameActive = true;
+      startBtn.style.display = 'none';
+      restartBtn.style.display = 'inline-block';
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    function gameLoop(timestamp) {
+      if (!gameActive) return;
+      
+      if (timestamp - lastFrameTime < (1000 / (SPEED / CELL_SIZE))) {
+        requestAnimationFrame(gameLoop);
+        return;
+      }
+      lastFrameTime = timestamp;
+      
+      const cols = Math.floor(container.offsetWidth / CELL_SIZE);
+      const rows = Math.floor(container.offsetHeight / CELL_SIZE);
+      const effectiveWidth = cols * CELL_SIZE;
+      const effectiveHeight = rows * CELL_SIZE;
+      
+      let newHead = { x: snakeSegments[0].x, y: snakeSegments[0].y };
+      switch(direction) {
+         case 'right': newHead.x += CELL_SIZE; break;
+         case 'left': newHead.x -= CELL_SIZE; break;
+         case 'up': newHead.y -= CELL_SIZE; break;
+         case 'down': newHead.y += CELL_SIZE; break;
+      }
+
+      if (newHead.x < 0 || newHead.x >= effectiveWidth ||
+          newHead.y < 0 || newHead.y >= effectiveHeight) {
+         gameOver();
+         return;
+      }
+
+      for (let i = 0; i < snakeSegments.length; i++) {
+         if (snakeSegments[i].x === newHead.x && snakeSegments[i].y === newHead.y) {
+            gameOver();
+            return;
+         }
+      }
+
+      snakeSegments.unshift(newHead);
+
+      let foodX = parseInt(food.style.left);
+      let foodY = parseInt(food.style.top);
+      if (newHead.x === foodX && newHead.y === foodY) {
+         score += 10;
+         updateScore();
+         spawnFood();
+      } else {
+         snakeSegments.pop();
+      }
+
+      updateSnakeElements(snakeSegments);
+      requestAnimationFrame(gameLoop);
+    }
+
+    function spawnFood() {
+      const cols = Math.floor(container.offsetWidth / CELL_SIZE);
+      const rows = Math.floor(container.offsetHeight / CELL_SIZE);
+      let foodX, foodY;
+      let collision;
+      do {
+         const randomCol = Math.floor(Math.random() * cols);
+         const randomRow = Math.floor(Math.random() * rows);
+         foodX = randomCol * CELL_SIZE;
+         foodY = randomRow * CELL_SIZE;
+         collision = snakeSegments.some(segment => segment.x === foodX && segment.y === foodY);
+      } while(collision);
+      food.style.left = foodX + 'px';
+      food.style.top = foodY + 'px';
+    }
+
+    function updateScore() {
+      scoreElement.textContent = score;
+      highscore = Math.max(score, highscore);
+      highscoreElement.textContent = highscore;
+      localStorage.setItem('snakeHighScore', highscore);
+    }
+
+    function updateSnakeElements(segments) {
+      while (snakeSegmentElements.length < segments.length) {
+         let segElem = document.createElement('div');
+         segElem.classList.add('snake-segment');
+         container.appendChild(segElem);
+         snakeSegmentElements.push(segElem);
+      }
+      while (snakeSegmentElements.length > segments.length) {
+         let segElem = snakeSegmentElements.pop();
+         segElem.remove();
+      }
+      for (let i = 0; i < segments.length; i++) {
+         snakeSegmentElements[i].style.left = segments[i].x + 'px';
+         snakeSegmentElements[i].style.top = segments[i].y + 'px';
+      }
+    }
+
+    function gameOver() {
+      gameActive = false;
+      alert('游戏结束！得分: ' + score);
+      startBtn.style.display = 'inline-block';
+      restartBtn.style.display = 'none';
+    }
+
+    function handleKeyPress(e) {
+      const keyMap = {
+         ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right',
+         w: 'up', W: 'up',
+         s: 'down', S: 'down',
+         a: 'left', A: 'left',
+         d: 'right', D: 'right'
+      };
+      const newDir = keyMap[e.key];
+      if (newDir && !isOpposite(newDir)) {
+         direction = newDir;
+      }
+    }
+
+    function isOpposite(newDir) {
+      return (direction === 'right' && newDir === 'left') ||
+             (direction === 'left' && newDir === 'right') ||
+             (direction === 'up' && newDir === 'down') ||
+             (direction === 'down' && newDir === 'up');
+    }
+
+    // 改进后的触摸事件：设置了较低的阈值（5px），并调用 preventDefault()
+    let touchStartX = 0, touchStartY = 0;
+    container.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+    });
+    container.addEventListener('touchmove', (e) => {
+      if (!gameActive) return;
+      e.preventDefault();
+      const touchEndX = e.touches[0].clientX;
+      const touchEndY = e.touches[0].clientY;
+      const dx = touchEndX - touchStartX;
+      const dy = touchEndY - touchStartY;
+      const threshold = 5; // 触发方向变化的阈值设为5px
+      if (Math.abs(dx) > threshold || Math.abs(dy) > threshold) {
+        if (Math.abs(dx) > Math.abs(dy)) {
+           direction = dx > 0 ? 'right' : 'left';
+        } else {
+           direction = dy > 0 ? 'down' : 'up';
+        }
+        // 更新初始触摸点，便于连续检测
+        touchStartX = touchEndX;
+        touchStartY = touchEndY;
+      }
+    }, { passive: false });
+
+    startBtn.addEventListener('click', initGame);
+    restartBtn.addEventListener('click', initGame);
+    document.addEventListener('keydown', handleKeyPress);
+  </script>
+</body>
+</html>

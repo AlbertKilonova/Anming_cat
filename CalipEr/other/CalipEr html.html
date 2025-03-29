@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalipEr HTML</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @font-face {
+            font-family: 'MapleMono';
+            src: url('MapleMonoNormal-Light.woff2') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+        }
+        #code {
+            font-family: 'MapleMono', monospace;
+            text-align: left; /* 左对齐 */
+        }
+        #filename {
+            background-color: transparent;
+            color: white;
+            border: none;
+            outline: none;
+            width: auto;
+        }
+        /* 调整按钮文字大小 */
+        .button-text {
+            font-size: 0.8rem;
+        }
+        @media (max-width: 768px) {
+            /* 针对手机屏幕的样式调整 */
+            .md\:w-1\/2 {
+                width: 100%;
+            }
+            .md\:h-full {
+                height: 50%;
+            }
+            .md\:flex-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="flex flex-col md:flex-row h-screen">
+        <!-- 左侧代码区域 -->
+        <div class="w-full md:w-1/2 h-1/2 md:h-full flex flex-col">
+            <!-- 按钮栏 -->
+            <div class="flex items-center justify-between p-2 bg-gray-800 border-b border-gray-700">
+                <span class="text-gray-400"> </span>
+                <input id="filename" type="text" value="code" />
+                <span class="text-gray-400"> </span>
+                <div class="flex space-x-4"> <!-- 增加按钮间距 -->
+                    <button onclick="copyCode()" class="p-2 text-white bg-gray-700 hover:bg-gray-600 rounded">
+                        <span class="button-text">Copy</span>
+                    </button>
+                    <button onclick="downloadCode()" class="p-2 text-white bg-gray-700 hover:bg-gray-600 rounded">
+                        <span class="button-text">Download</span>
+                    </button>
+                </div>
+            </div>
+            <!-- 代码输入框 -->
+            <textarea id="code" class="flex-1 p-4 bg-gray-800 text-white outline-none resize-none" placeholder="输入 HTML 代码..." oninput="updatePreview()"></textarea>
+        </div>
+        
+        <!-- 右侧预览窗口 -->
+        <iframe id="preview" class="w-full md:w-1/2 h-1/2 md:h-full bg-white"></iframe>
+    </div>
+
+    <script>
+        function updatePreview() {
+            const code = document.getElementById("code").value;
+            const previewFrame = document.getElementById("preview");
+            const preview = previewFrame.contentDocument || previewFrame.contentWindow.document;
+            preview.open();
+            preview.write(code);
+            preview.close();
+        }
+        
+        function copyCode() {
+            const code = document.getElementById("code");
+            code.select();
+            document.execCommand("copy");
+            alert("Code copied!");
+        }
+        
+        function downloadCode() {
+            const code = document.getElementById("code").value;
+            const filename = document.getElementById("filename").value.trim() || "code";
+            const blob = new Blob([code], { type: "text/html" });
+            const a = document.createElement("a");
+            a.href = URL.createObjectURL(blob);
+            a.download = filename + ".html";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>

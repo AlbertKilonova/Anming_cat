@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CalipEr视频播放器</title>
+  <style>
+    /* 整体页面背景调整为淡灰色 */
+    body {
+      background: #f0f0f0;
+      color: #333;
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+    /* 播放器容器 */
+    .container {
+      max-width: 800px;
+      width: 100%;
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+    /* 拖拽区域样式 */
+    .drag-drop-zone {
+      border: 2px dashed #0078D7;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 20px;
+      transition: border-color 0.3s;
+      color: #0078D7;
+      font-weight: bold;
+    }
+    .drag-drop-zone.active {
+      border-color: #005a9e;
+    }
+    /* 自定义文件上传按钮 */
+    .custom-file-upload {
+      background: #0078D7;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.3s;
+      display: inline-block;
+      margin-left: 8px;
+    }
+    .custom-file-upload:hover {
+      background: #005a9e;
+    }
+    /* 视频容器 */
+    #videoContainer {
+      position: relative;
+      width: 100%;
+      padding-top: 56.25%; /* 16:9比例 */
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      transition: all 0.5s ease;
+    }
+    #videoPlayer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      outline: none;
+    }
+    /* 控制区域样式 */
+    .controls {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    .progress-container {
+      width: 100%;
+      height: 8px;
+      background: #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    #progressBar {
+      height: 100%;
+      background: #0078D7;
+      width: 0;
+      transition: width 0.1s linear;
+    }
+    .time-display {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      color: #555;
+    }
+    /* 按钮样式 */
+    .btn-group, .info-control {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    button {
+      background: #0078D7;
+      border: none;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s, opacity 0.3s;
+      font-size: 16px;
+    }
+    button:hover {
+      background: #005a9e;
+      opacity: 0.9;
+    }
+    /* 音量控制 */
+    .volume-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+    }
+    #volumeSlider {
+      width: 120px;
+    }
+    #volumePercent {
+      font-size: 14px;
+      color: #555;
+    }
+    /* 历史播放列表 */
+    #historyList {
+      margin-top: 20px;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+    #historyList li {
+      list-style: none;
+      padding: 5px;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+    }
+    #historyList li:hover {
+      background: #f0f0f0;
+    }
+    /* 视频信息面板 */
+    #videoInfo {
+      display: none;
+      margin-top: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background: #f9f9f9;
+    }
+    #videoInfo input {
+      padding: 5px;
+      margin-top: 5px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #videoInfo div {
+      margin-bottom: 10px;
+    }
+    /* 动画效果 */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes scaleUp {
+      from { transform: scale(0.9); }
+      to { transform: scale(1); }
+    }
+    @keyframes rotate360 {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-fadeIn {
+      animation: fadeIn 0.5s ease forwards;
+    }
+    .animate-scaleUp {
+      animation: scaleUp 0.3s ease forwards;
+    }
+    .animate-rotate360 {
+      animation: rotate360 1s ease forwards;
+    }
+
+    /* 响应式布局调整 */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+      .drag-drop-zone {
+        padding: 10px;
+        font-size: 14px;
+      }
+      .custom-file-upload {
+        padding: 8px 15px;
+        font-size: 14px;
+      }
+      .btn-group, .info-control {
+        gap: 5px;
+      }
+      button {
+        padding: 8px 12px;
+        font-size: 14px;
+      }
+      .volume-control {
+        gap: 5px;
+      }
+      #volumeSlider {
+        width: 80px;
+      }
+      .time-display {
+        font-size: 12px;
+      }
+      #videoInfo {
+        padding: 10px;
+      }
+      #videoInfo input {
+        font-size: 14px;
+      }
+      #videoInfo div {
+        margin-bottom: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="drag-drop-zone" id="dropZone">
+      拖放视频文件到这里或
+      <label class="custom-file-upload">
+        选择本地视频
+        <input type="file" id="videoInput" accept="video/*">
+      </label>
+    </div>
+
+    <div id="videoContainer">
+      <!-- 移除自带控件 -->
+      <video id="videoPlayer"></video>
+    </div>
+
+    <div class="controls">
+      <div class="progress-container">
+        <div id="progressBar"></div>
+      </div>
+      <div class="time-display">
+        <span id="currentTime">00:00</span>
+        <span id="duration">00:00</span>
+      </div>
+      <div class="btn-group">
+        <button onclick="togglePlay()" id="playPauseBtn">▶</button>
+        <button onclick="replayVideo()">重播</button>
+        <button onclick="changeSpeed()" id="speedBtn">倍速: 1x</button>
+      </div>
+      <div class="volume-control">
+        <span>音量</span>
+        <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="1">
+        <span id="volumePercent">100%</span>
+      </div>
+      <div class="info-control">
+        <button onclick="toggleInfo()">显示视频信息</button>
+      </div>
+    </div>
+
+    <!-- 历史播放列表 -->
+    <ul id="historyList"></ul>
+
+    <!-- 视频信息面板（仅显示能获取的信息） -->
+    <div id="videoInfo">
+      <div>
+        <strong>文件名称：</strong><br>
+        <input type="text" id="fileName">
+      </div>
+      <div>
+        <strong>格式：</strong><span id="fileType"></span>
+      </div>
+      <div>
+        <strong>最后修改时间：</strong><span id="fileModified"></span>
+      </div>
+      <div>
+        <strong>大小：</strong><span id="fileSize"></span>
+      </div>
+      <div>
+        <strong>路径：</strong><span id="filePath"></span>
+      </div>
+      <div style="text-align: center;">
+        <button onclick="saveFile()">保存文件</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const videoPlayer = document.getElementById('videoPlayer');
+    const videoInput = document.getElementById('videoInput');
+    const dropZone = document.getElementById('dropZone');
+    const progressBar = document.getElementById('progressBar');
+    const currentTime = document.getElementById('currentTime');
+    const duration = document.getElementById('duration');
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const speedBtn = document.getElementById('speedBtn');
+    const volumeSlider = document.getElementById('volumeSlider');
+    const volumePercent = document.getElementById('volumePercent');
+    const videoInfo = document.getElementById('videoInfo');
+    const fileNameInput = document.getElementById('fileName');
+    const fileTypeSpan = document.getElementById('fileType');
+    const fileModifiedSpan = document.getElementById('fileModified');
+    const fileSizeSpan = document.getElementById('fileSize');
+    const filePathSpan = document.getElementById('filePath');
+    const historyList = document.getElementById('historyList');
+
+    let currentFile = null; // 当前加载的文件对象
+    const historyFiles = []; // 历史播放列表
+
+    // 倍速设置数组与当前索引
+    const speeds = [0.25, 0.5, 1, 1.5, 2];
+    let speedIndex = 2; // 默认 1x
+
+    // 文件选择处理
+    videoInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        currentFile = file;
+        loadVideo(file);
+        addToHistory(file);
+      }
+    });
+
+    // 拖放处理
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('active');
+    });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('active');
+    });
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('active');
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        currentFile = file;
+        loadVideo(file);
+        addToHistory(file);
+      }
+    });
+
+    // 加载视频
+    function loadVideo(file) {
+      const url = URL.createObjectURL(file);
+      videoPlayer.src = url;
+      videoPlayer.play();
+      playPauseBtn.textContent = '⏸';
+      // 隐藏视频信息面板
+      videoInfo.style.display = 'none';
+      // 添加动画效果
+      document.querySelector('.container').classList.add('animate-fadeIn');
+      videoContainer.classList.add('animate-scaleUp');
+    }
+
+    // 播放/暂停控制
+    function togglePlay() {
+      if (videoPlayer.paused) {
+        videoPlayer.play();
+        playPauseBtn.textContent = '⏸';
+      } else {
+        videoPlayer.pause();
+        playPauseBtn.textContent = '▶';
+      }
+      // 添加动画效果并支持打断动画
+      playPauseBtn.classList.remove('animate-rotate360');
+      void playPauseBtn.offsetWidth; // 触发重绘，确保动画重新开始
+      playPauseBtn.classList.add('animate-rotate360');
+    }
+
+    // 重播视频
+    function replayVideo() {
+      videoPlayer.currentTime = 0;
+      videoPlayer.play();
+      playPauseBtn.textContent = '⏸';
+      // 添加动画效果
+      videoContainer.classList.add('animate-scaleUp');
+      setTimeout(() => {
+        videoContainer.classList.remove('animate-scaleUp');
+      }, 300);
+    }
+
+    // 进度条更新
+    videoPlayer.addEventListener('timeupdate', () => {
+      if (videoPlayer.duration) {
+        const progress = (videoPlayer.currentTime / videoPlayer.duration) * 100;
+        progressBar.style.width = `${progress}%`;
+        currentTime.textContent = formatTime(videoPlayer.currentTime);
+      }
+    });
+
+    // 倍速按钮控制：循环切换预设播放速度
+    function changeSpeed() {
+      speedIndex = (speedIndex + 1) % speeds.length;
+      const newSpeed = speeds[speedIndex];
+      videoPlayer.playbackRate = newSpeed;
+      speedBtn.textContent = `倍速: ${newSpeed}x`;
+      // 添加动画效果并支持打断动画
+      speedBtn.classList.remove('animate-rotate360');
+      void speedBtn.offsetWidth; // 触发重绘，确保动画重新开始
+      speedBtn.classList.add('animate-rotate360');
+    }
+
+    // 音量控制
+    volumeSlider.addEventListener('input', (e) => {
+      const vol = e.target.value;
+      videoPlayer.volume = vol;
+      volumePercent.textContent = `${Math.round(vol * 100)}%`;
+    });
+
+    // 时间格式化函数
+    function formatTime(seconds) {
+      const minutes = Math.floor(seconds / 60);
+      seconds = Math.floor(seconds % 60);
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    // 点击进度条跳转
+    document.querySelector('.progress-container').addEventListener('click', (e) => {
+      const rect = e.target.getBoundingClientRect();
+      const pos = (e.clientX - rect.left) / rect.width;
+      if (videoPlayer.duration) {
+        videoPlayer.currentTime = pos * videoPlayer.duration;
+        // 添加动画效果
+        progressBar.classList.add('animate-scaleUp');
+        setTimeout(() => {
+          progressBar.classList.remove('animate-scaleUp');
+        }, 300);
+      }
+    });
+
+    // 切换显示/隐藏视频信息面板（仅显示能获取的信息）
+    function toggleInfo() {
+      if (!currentFile) {
+        alert("请先加载视频文件！");
+        return;
+      }
+      if (videoInfo.style.display === 'none' || videoInfo.style.display === '') {
+        // 填充视频信息
+        fileNameInput.value = currentFile.name;
+        fileTypeSpan.textContent = currentFile.type || "未知";
+        fileModifiedSpan.textContent = new Date(currentFile.lastModified).toLocaleString();
+        fileSizeSpan.textContent = formatFileSize(currentFile.size);
+        // 安全限制下仅显示文件名作为路径
+        filePathSpan.textContent = currentFile.name;
+        videoInfo.style.display = 'block';
+        // 添加动画效果
+        videoInfo.classList.add('animate-fadeIn');
+      } else {
+        videoInfo.style.display = 'none';
+      }
+    }
+
+    // 文件大小格式化
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return bytes + " B";
+      else if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + " KB";
+      else return (bytes / (1024 * 1024)).toFixed(2) + " MB";
+    }
+
+    // 保存文件：通过下载的方式保存修改后名称的视频
+    function saveFile() {
+      if (!currentFile) {
+        alert("没有加载视频文件！");
+        return;
+      }
+      let newName = fileNameInput.value.trim();
+      if (!newName) {
+        alert("文件名称不能为空！");
+        return;
+      }
+      const a = document.createElement('a');
+      a.href = videoPlayer.src;
+      a.download = newName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+
+    // 添加到历史播放列表（避免重复添加同一文件）
+    function addToHistory(file) {
+      // 检查是否已存在（根据文件名称判断）
+      if (!historyFiles.some(f => f.name === file.name)) {
+        historyFiles.push(file);
+        updateHistoryList();
+      }
+    }
+
+    // 更新历史播放列表显示
+    function updateHistoryList() {
+      historyList.innerHTML = "";
+      historyFiles.forEach((file, index) => {
+        const li = document.createElement('li');
+        li.textContent = file.name;
+        li.onclick = () => {
+          currentFile = file;
+          loadVideo(file);
+        };
+        historyList.appendChild(li);
+      });
+    }
+
+    // 确保触摸事件正常工作
+    dropZone.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('active');
+    });
+
+    dropZone.addEventListener('touchend', () => {
+      dropZone.classList.remove('active');
+    });
+
+    dropZone.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+    });
+  </script>
+</body>
+</html>

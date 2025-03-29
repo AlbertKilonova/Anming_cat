@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalipEr计算器</title>
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            background-color: #f5f5f5;
+            font-family: 'Segoe UI', system-ui;
+        }
+
+        .calculator {
+            width: 320px;
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transform: scale(0.95);
+            transition: transform 0.3s ease;
+        }
+
+        .calculator:hover {
+            transform: scale(1);
+        }
+
+        .display {
+            height: 100px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            position: relative;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .prev-operand {
+            color: #6c757d;
+            font-size: 1.2rem;
+            height: 24px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .curr-operand {
+            color: #343a40;
+            font-size: 3rem;
+            font-weight: 300;
+            text-align: right;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+
+        .btn {
+            border: none;
+            padding: 22px;
+            font-size: 1.5rem;
+            border-radius: 8px;
+            background: #e9ecef;
+            color: #343a40;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            background: #dee2e6;
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .operator {
+            background: #4dabf7;
+            color: white;
+        }
+
+        .operator:hover {
+            background: #339af0;
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(77, 171, 247, 0.4);
+        }
+
+        .accent {
+            background: #f8d04b;
+            color: #343a40;
+        }
+
+        .accent:hover {
+            background: #ffd460;
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(248, 208, 75, 0.4);
+        }
+
+        .span-2 {
+            grid-column: span 2;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+        }
+
+        .error {
+            animation: shake 0.5s ease;
+            color: #ff6b6b !important;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .new-input {
+            animation: popIn 0.3s ease;
+        }
+
+        .result {
+            color: #4CAF50 !important;
+        }
+        
+        /* 为信息按钮添加按钮样式 */
+        #infoButton {
+            display: block;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #343a40;
+            background-color: #e9ecef;
+            border: none;
+            border-radius: 8px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        #infoButton:hover {
+            background-color: #dee2e6;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display">
+            <div class="prev-operand"></div>
+            <div class="curr-operand">0</div>
+        </div>
+        <div class="buttons">
+            <button class="btn accent" data-action="clear">AC</button>
+            <button class="btn operator" data-action="delete">DEL</button>
+            <button class="btn operator" data-action="percent">%</button>
+            <button class="btn operator" data-action="divide">÷</button>
+            <button class="btn" data-number="7">7</button>
+            <button class="btn" data-number="8">8</button>
+            <button class="btn" data-number="9">9</button>
+            <button class="btn operator" data-action="multiply">×</button>
+            <button class="btn" data-number="4">4</button>
+            <button class="btn" data-number="5">5</button>
+            <button class="btn" data-number="6">6</button>
+            <button class="btn operator" data-action="subtract">-</button>
+            <button class="btn" data-number="1">1</button>
+            <button class="btn" data-number="2">2</button>
+            <button class="btn" data-number="3">3</button>
+            <button class="btn operator" data-action="add">+</button>
+            <button class="btn span-2" data-number="0">0</button>
+            <button class="btn" data-number=".">.</button>
+            <button class="btn operator" data-action="equals">=</button>
+        </div>
+    </div>
+    <!-- 将小字改为按钮形状 -->
+    <button id="infoButton">Anming_cat</button>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const calculator = document.querySelector('.calculator');
+            const prevOperand = document.querySelector('.prev-operand');
+            const currOperand = document.querySelector('.curr-operand');
+            const buttons = document.querySelectorAll('.btn');
+
+            let currentOperand = '0';
+            let previousOperand = '';
+            let operation = undefined;
+            let resetScreen = false;
+
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (button.dataset.number) {
+                        inputNumber(button.dataset.number);
+                    } else if (button.dataset.action) {
+                        inputAction(button.dataset.action);
+                    }
+                });
+            });
+
+            function inputNumber(number) {
+                if (resetScreen) {
+                    currentOperand = '';
+                    resetScreen = false;
+                }
+                if (number === '.' && currentOperand.includes('.')) return;
+                if (currentOperand === '0' && number !== '.') {
+                    currentOperand = number;
+                } else {
+                    currentOperand += number;
+                }
+                updateDisplay();
+            }
+
+            function inputAction(action) {
+                switch (action) {
+                    case 'add':
+                    case 'subtract':
+                    case 'multiply':
+                    case 'divide':
+                    case 'percent':
+                        handleOperation(action);
+                        break;
+                    case 'equals':
+                        calculate();
+                        break;
+                    case 'clear':
+                        clear();
+                        break;
+                    case 'delete':
+                        deleteNumber();
+                        break;
+                }
+            }
+
+            function handleOperation(op) {
+                if (currentOperand === '') return;
+                if (previousOperand !== '') {
+                    calculate();
+                }
+                operation = op;
+                previousOperand = currentOperand;
+                currentOperand = '';
+                updateDisplay();
+            }
+
+            function calculate() {
+                let computation;
+                const prev = parseFloat(previousOperand);
+                const current = parseFloat(currentOperand);
+                if (isNaN(prev) || isNaN(current)) return;
+
+                switch (operation) {
+                    case 'add':
+                        computation = prev + current;
+                        break;
+                    case 'subtract':
+                        computation = prev - current;
+                        break;
+                    case 'multiply':
+                        computation = prev * current;
+                        break;
+                    case 'divide':
+                        if (current === 0) {
+                            currOperand.textContent = '错误';
+                            calculator.classList.add('error');
+                            currOperand.style.color = '#ff6b6b';
+                            setTimeout(() => {
+                                calculator.classList.remove('error');
+                                currOperand.textContent = '0';
+                                currOperand.style.color = '#343a40';
+                                previousOperand = '';
+                                operation = undefined;
+                            }, 1000);
+                            return;
+                        }
+                        computation = prev / current;
+                        break;
+                    case 'percent':
+                        computation = prev * (current / 100);
+                        break;
+                    default:
+                        return;
+                }
+
+                currentOperand = computation.toString();
+                operation = undefined;
+                previousOperand = '';
+                resetScreen = true;
+                updateDisplay();
+                currOperand.classList.add('result');
+            }
+
+            function clear() {
+                currentOperand = '0';
+                previousOperand = '';
+                operation = undefined;
+                updateDisplay();
+                currOperand.style.color = '#343a40';
+                currOperand.classList.remove('result');
+            }
+
+            function deleteNumber() {
+                if (currentOperand.length === 1 || (currentOperand.length === 2 && currentOperand.startsWith('-'))) {
+                    currentOperand = '0';
+                } else {
+                    currentOperand = currentOperand.slice(0, -1);
+                }
+                updateDisplay();
+            }
+
+            function updateDisplay() {
+                currOperand.textContent = currentOperand;
+                currOperand.style.color = '#343a40';
+                currOperand.classList.remove('result');
+                if (operation) {
+                    prevOperand.textContent = `${previousOperand} ${operationDisplay(operation)}`;
+                } else {
+                    prevOperand.textContent = previousOperand;
+                }
+            }
+
+            function operationDisplay(op) {
+                switch (op) {
+                    case 'add': return '+';
+                    case 'subtract': return '-';
+                    case 'multiply': return '×';
+                    case 'divide': return '÷';
+                    case 'percent': return '%';
+                    default: return op;
+                }
+            }
+
+            document.querySelectorAll('.btn').forEach(btn => {
+                btn.classList.add('new-input');
+            });
+            
+            // 为信息按钮添加点击事件，弹出邮箱地址
+            document.getElementById('infoButton').addEventListener('click', function() {
+                alert('anming1379@outlook.com');
+            });
+        });
+    </script>
+</body>
+</html>

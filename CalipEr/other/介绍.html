@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalipEr介绍</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 500px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .card-title {
+            padding: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            background-color: #f8f9fa;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        
+        .card-content {
+            padding: 20px;
+            display: none;
+            color: #333;
+            background-color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover, .card.toggled {
+            transform: translateY(-10px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card.toggled .card-title {
+            background-color: #333;
+            color: white;
+        }
+        
+        .card.toggled .card-content {
+            display: block;
+            color: white;
+            background-color: #333;
+        }
+        
+        @media (max-width: 768px) {
+            .card {
+                width: 90%;
+                max-width: none;
+            }
+            
+            .card-title {
+                font-size: 18px;
+            }
+            
+            .card-content {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>CalipEr介绍</h1>
+    <div class="container">
+        <div class="card" onclick="toggleCard(this)">
+            <div class="card-title">CalipEr是什么</div>
+            <div class="card-content">
+                <p>CalipEr是一个网页小工具,用处不大但挺好玩的(</p>
+                <ul>
+                    <li>CalipEr完全由Ai开发(除了少数文字和简单代码由Anming_cat提供)</li>
+                    <li>CalipEr是完全免费的,不要买也不要卖它</li>
+                </ul>
+                <p>CalipEr是一个有趣的网页,虽然都是Ai生成的</p>
+            </div>
+        </div>
+        
+        <div class="card" onclick="toggleCard(this)">
+            <div class="card-title">CalipEr的作者是谁</div>
+            <div class="card-content">
+                <p>CalipEr由Anming_cat创作</p>
+                <ul>
+                    <li>Anming_cat不懂代码,除了上信息课学了一点Python</li>
+                    <li>Anming_cat借助Ai来完成这网页,应该算零代码开发者...?</li>
+                    <li>Anming_cat的邮箱是anming1379@outlook.com</li>
+                </ul>
+                <p>Anming_cat通过长期的研究和实践，不断优化CalipEr的设计</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleCard(card) {
+            card.classList.toggle('toggled');
+        }
+        
+        // 鼠标移入卡片时展开
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.classList.add('toggled');
+            });
+            
+            // 鼠标移出卡片时收起
+            card.addEventListener('mouseleave', function() {
+                this.classList.remove('toggled');
+            });
+        });
+    </script>
+</body>
+</html>

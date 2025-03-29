@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>矢量绘画</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
+    <style>
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="setDrawingMode(true)">钢笔工具</button>
+    <button onclick="setDrawingMode(false)">选择工具</button>
+    <button onclick="undo()">撤销</button>
+    <button onclick="redo()">重做</button>
+    <button onclick="clearCanvas()">清空</button>
+    <button onclick="exportSVG()">导出SVG</button>
+    <canvas id="canvas" width="800" height="600"></canvas>
+
+    <script>
+        const canvas = new fabric.Canvas('canvas');
+        let isDrawing = false;
+        let path;
+        let history = [];
+        let redoStack = [];
+
+        function setDrawingMode(enabled) {
+            canvas.isDrawingMode = enabled;
+            if (enabled) {
+                canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
+                canvas.freeDrawingBrush.color = "black";
+                canvas.freeDrawingBrush.width = 2;
+            }
+        }
+
+        function undo() {
+            if (canvas._objects.length > 0) {
+                redoStack.push(canvas._objects.pop());
+                canvas.renderAll();
+            }
+        }
+
+        function redo() {
+            if (redoStack.length > 0) {
+                canvas.add(redoStack.pop());
+                canvas.renderAll();
+            }
+        }
+
+        function clearCanvas() {
+            canvas.clear();
+            redoStack = [];
+        }
+
+        function exportSVG() {
+            const svg = canvas.toSVG();
+            const blob = new Blob([svg], { type: 'image/svg+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'drawing.svg';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
