@@ -7,23 +7,23 @@
     "avatar": "https://q.qlogo.cn/g?b=qq&nk=3865768909&s=100",
     "name": "Anming_cat",
     "title": "身份",
-    "location": "住址",
+    "location": "江西 中国",
     "contacts": {
-      "email": "邮箱地址",
-      "qq": "QQ号",
+      "email": "Anming1379@outlook.com",
+      "qq": "3865768909",
       "qgroup": {
-        "text": "QQ群",
-        "link": "入群链接"
+        "text": "1019878444",
+        "link": "https://qm.qq.com/q/dfEKYIWBm8"
       },
-      "x": "X",
-      "discord": "discord"
+      "x": "Anming_cat",
+      "discord": "Anming_cat"
     }
   },
   "sections": [
   {
     "id": "about",
-    "title": "关于臭猫",
-    "content": "介绍"
+    "title": "关于桉铭",
+    "content": "Hi 我是桉铭一个up然后没了"
   },
   {
     "id": "works",
@@ -33,14 +33,14 @@
   },
   {
     "id": "contact",
-    "title": "联系臭猫",
+    "title": "联系桉铭",
     "type": "contact-list",
     "items": [
     {
       "label": "邮箱",
-      "value": "邮箱地址",
+      "value": "anming1379@outlook.com",
       "type": "email",
-      "link": "mailto:邮箱地址"
+      "link": "mailto:Anming1379@outlook.com"
     },
     {
       "label": "QQ_Android",
@@ -54,18 +54,18 @@
     },
     {
       "label": "QQ群",
-      "value": "QQ群号",
-      "link": "QQ群入群链接"
+      "value": "1019878444",
+      "link": "https://qm.qq.com/q/dfEKYIWBm8"
     },
     {
       "label": "X",
-      "value": "推特名",
-      "link": "链接"
+      "value": "Anming_cat",
+      "link": "https://x.com/Anming_cat"
     },
     {
       "label": "Discord",
-      "value": "discord名",
-      "link": "链接"
+      "value": "Anming_cat",
+      "link": "https://discord.com/channels/@anming_cat_46705"
     }]
   }],
   "nav": [
