@@ -1,105 +1,71 @@
 {
   "meta": {
-    "title": "Albert_Kilonova",
+    "title": "Anming_cat",
     "description": "个人作品展示与联系方式"
   },
   "profile": {
-    "avatar": "https://q.qlogo.cn/g?b=qq&nk=2294965955&s=100",
-    "name": "AlbertKilonova",
-    "title": "学生",
-    "location": "山东, 中国",
+    "avatar": "https://q.qlogo.cn/g?b=qq&nk=3865768909&s=100",
+    "name": "Anming_cat",
+    "title": "身份",
+    "location": "住址",
     "contacts": {
-      "email": "Albert.Kilonova@gmail.com",
-      "qq": "2294965955",
+      "email": "邮箱地址",
+      "qq": "QQ号",
       "qgroup": {
-        "text": "1001363193",
-        "link": "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=z5bUCC1lvAQuAn3J_-n96sR2KJlLAHcf"
+        "text": "QQ群",
+        "link": "入群链接"
       },
-      "x": "https://x.com/AKilonova17598",
-      "discord": "https://discord.com/channels/@Albert.Kilonova"
+      "x": "X",
+      "discord": "discord"
     }
   },
   "sections": [
   {
     "id": "about",
-    "title": "关于",
-    "content": "你好！我是Albert_Kilonova，一名普通的学生，我对各领域都非常感兴趣，目前主要投入火柴人动画:P<br/>这是我的bilibili账号：<a href='https://space.bilibili.com/698493476'>Albert_Kilonova</a>"
+    "title": "关于臭猫",
+    "content": "介绍"
   },
   {
     "id": "works",
-    "title": "作品",
+    "title": "作品展示",
     "type": "dynamic",
     "dataSource": "works.json"
   },
   {
     "id": "contact",
-    "title": "联系",
+    "title": "联系臭猫",
     "type": "contact-list",
     "items": [
     {
       "label": "邮箱",
-      "value": "Albert.Kilonova@gmail.com",
+      "value": "邮箱地址",
       "type": "email",
-      "link": "mailto:Albert.Kilonova@gmail.com"
+      "link": "mailto:邮箱地址"
     },
     {
       "label": "QQ_Android",
-      "value": "2294965955",
-      "link": "mqqwpa://im/chat?chat_type=wpa&uin=2294965955&version=1&src_type=web"
+      "value": "3865768909",
+      "link": "mqqwpa://im/chat?chat_type=wpa&uin=3865768909&version=1&src_type=web"
     },
     {
       "label": "QQ_PC",
-      "value": "2294965955",
-      "link": "tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=2294965955"
+      "value": "3865768909",
+      "link": "tencent://AddContact/?fromId=45&fromSubId=1&subcmd=all&uin=3865768909"
     },
     {
       "label": "QQ群",
-      "value": "1001363193",
-      "link": "http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=ca0kZ5jBI60UD2V8OzZwJ3YrwL0pvuKY&authKey=uoUNc%2F2CihzqLw4beRJMa4RjgK5mrxPGkJc3vq5saiJRRtaGTS33v1U%2BHgeJmcAm&noverify=0&group_code=1001363193"
+      "value": "QQ群号",
+      "link": "QQ群入群链接"
     },
     {
       "label": "X",
-      "value": "AKilonova17598",
-      "link": "https://x.com/AKilonova17598"
+      "value": "推特名",
+      "link": "链接"
     },
     {
       "label": "Discord",
-      "value": "AlbertKilonova",
-      "link": "https://discord.com/channels/@Albert.Kilonova"
-    }]
-  },
-  {
-    "id": "resource",
-    "title": "资源分享",
-    "type": "link-list",
-    "items": [
-    {
-      "text": "AlightMotionWiki",
-      "link": "https://alightmotionwikic.pages.dev/"
-    },
-    {
-      "text": "Music",
-      "link": "https://www.123865.com/s/gSs1Td-XfTM"
-    },
-    {
-      "text": "Fonts",
-      "link": "https://www.123865.com/s/gSs1Td-nfTM"
-    },
-    {
-      "text": "Wallpapers",
-      "link": "https://www.123865.com/s/gSs1Td-RfTM"
-    },
-    {
-      "text": "App[Windows/Linux/Android]",
-      "link": "https://www.123865.com/s/gSs1Td-TMTM"
-    },
-    {
-      "text": "Pictures",
-      "link": "https://www.123865.com/s/gSs1Td-vMTM"
-    },
-    {
-      "text": "Open Movies",
-      "link": "https://www.123865.com/s/gSs1Td-dMTM"
+      "value": "discord名",
+      "link": "链接"
     }]
   }],
   "nav": [
@@ -114,9 +80,6 @@
   {
     "text": "联系",
     "href": "#contact"
-  },
-  {
-    "text": "资源",
-    "href": "#resource"
-  }]
+  }
+  ]
 }
