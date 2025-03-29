@@ -371,3 +371,174 @@ img {
   opacity: 0;
   animation: fadeInUp 0.6s ease forwards 0.4s;
 }
+/* 音乐播放器增强样式 */
+.music-container {
+  margin: 1.5rem 0;
+  position: relative;
+}
+
+.music-controls {
+  text-align: right;
+  margin-bottom: 8px;
+}
+
+.shuffle-btn {
+  background: none;
+  border: 1px solid #66b2ff;
+  color: #66b2ff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9em;
+}
+
+.shuffle-btn:hover {
+  background: rgba(102, 178, 255, 0.1);
+}
+
+.player-wrapper {
+  transition: opacity 0.3s ease;
+  min-height: 66px;
+}
+
+.music-iframe {
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* styles.css 新增内容 */
+/* 资源分享装饰 */
+.resource-list {
+  background: #2a2a2a;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.resource-item {
+  position: relative;
+  margin-bottom: 12px;
+  padding-left: 28px;
+  list-style: none;
+}
+
+.link-decoration {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background: rgba(102, 178, 255, 0.15);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.resource-item:hover .link-decoration {
+  background: rgba(102, 178, 255, 0.25);
+  transform: translateY(-50%) rotate(45deg);
+}
+
+.link-icon {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.link-text {
+  border-bottom: 1px dashed rgba(102, 178, 255, 0.5);
+}
+
+/* 音乐播放器增强 */
+.music-container {
+  margin: 1.5rem 0;
+}
+
+.music-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.now-playing {
+  color: #88c9ff;
+  font-size: 0.95em;
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.shuffle-btn {
+  background: none;
+  border: 1px solid #66b2ff;
+  color: #66b2ff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shuffle-btn:hover {
+  background: rgba(102, 178, 255, 0.1);
+}
+
+.player-wrapper {
+  transition: opacity 0.3s ease;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .music-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .now-playing {
+    max-width: 100%;
+    margin-bottom: 8px;
+  }
+
+  .resource-item {
+    padding-left: 24px;
+  }
+  
+  .link-decoration {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* 在现有样式添加 */
+.works-list,
+.contact-list {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+/* 调整作品列表间距 */
+.work-item {
+  margin-bottom: 30px;
+  padding: 15px;
+  background: #3c3c3c;
+  border-radius: 4px;
+}
+
+/* 联系列表优化 */
+.contact-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid #3c3c3c;
+}
+
+/* 添加加载动画 */
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.loading-state {
+  color: #66b2ff;
+  text-align: center;
+  animation: pulse 1.5s infinite;
+}
