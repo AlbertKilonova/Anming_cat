@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>CalipEr图片格式转换</title>
+  <style>
+    /* 通用重置 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      padding: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 24px;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin: 15px 0 5px 0;
+      font-weight: bold;
+      color: #555;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 8px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    input:focus, select:focus, button:focus {
+      border-color: #007BFF;
+    }
+    button {
+      background: #007BFF;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #myCanvas {
+      margin-top: 20px;
+      border: 1px solid #ccc;
+      width: 100%;
+      max-width: 100%;
+      display: block;
+      border-radius: 4px;
+    }
+    .slider-container {
+      display: flex;
+      align-items: center;
+    }
+    .slider-container input[type="range"] {
+      flex: 1;
+    }
+    .slider-container span {
+      width: 50px;
+      text-align: center;
+      margin-left: 10px;
+      color: #007BFF;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>CalipEr图片格式转换</h1>
+    <!-- 上传图片 -->
+    <input type="file" id="upload" accept="image/*">
+    <!-- Canvas预览图片 -->
+    <canvas id="myCanvas"></canvas>
+
+    <div class="controls">
+      <!-- 输出格式选择 -->
+      <label for="format">选择输出格式：</label>
+      <select id="format">
+        <option value="image/jpeg">JPEG</option>
+        <option value="image/png">PNG</option>
+        <option value="image/webp">WEBP</option>
+      </select>
+
+      <!-- 滑块调整压缩质量 -->
+      <label for="quality">压缩质量 (仅对JPEG/WEBP有效，范围 0~1)：</label>
+      <div class="slider-container">
+        <input type="range" id="quality" min="0" max="1" step="0.01" value="1">
+        <span id="qualityValue"></span>
+      </div>
+
+      <!-- 更改输出文件名 -->
+      <label for="filename">更改文件名（不含扩展名）：</label>
+      <input type="text" id="filename" placeholder="请输入文件名, 不输入则不更改">
+
+      <!-- 保存图片按钮 -->
+      <button id="download">保存图片</button>
+    </div>
+  </div>
+
+  <script>
+    // 获取DOM元素
+    const upload = document.getElementById('upload');
+    const canvas = document.getElementById('myCanvas');
+    const ctx = canvas.getContext('2d');
+    const qualityInput = document.getElementById('quality');
+    const qualityValueLabel = document.getElementById('qualityValue');
+    const formatSelect = document.getElementById('format');
+    const filenameInput = document.getElementById('filename');
+    const downloadBtn = document.getElementById('download');
+
+    let img = new Image();
+
+    // 更新滑块显示值
+    qualityInput.addEventListener('input', () => {
+      qualityValueLabel.textContent = parseFloat(qualityInput.value).toFixed(2);
+    });
+
+    // 上传图片并在canvas上预览
+    upload.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        img = new Image();
+        img.onload = function() {
+          // 根据图片实际尺寸设置canvas
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+        }
+        img.src = evt.target.result;
+      }
+      reader.readAsDataURL(file);
+    });
+
+    // 点击“保存图片”按钮，生成指定格式、压缩质量及文件名的图片并下载
+    downloadBtn.addEventListener('click', () => {
+      const format = formatSelect.value;
+      const quality = parseFloat(qualityInput.value) || 0.8;
+      const fileName = filenameInput.value.trim() || "converted_image";
+      const ext = format.split('/')[1];
+
+      // 生成图片Data URL
+      const dataURL = canvas.toDataURL(format, quality);
+
+      // 创建临时链接实现下载
+      const a = document.createElement('a');
+      a.href = dataURL;
+      a.download = `${fileName}.${ext}`;
+      a.click();
+    });
+  </script>
+</body>
+</html>

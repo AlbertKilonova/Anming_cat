@@ -1,0 +1,11 @@
+Hi!,欢迎使用CalipEr!
+
+    点击  "CalipEr.html"  
+    选择用浏览器打开以开始使用
+
+不要移动它,如需移动请移动整个文件夹!!!
+(不然会有BUG)
+
+ENJOY THE HTML!!!
+
+        ----Anming_cat

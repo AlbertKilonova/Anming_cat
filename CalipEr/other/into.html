@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件合并工具</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .file-input {
+            margin-bottom: 15px;
+        }
+        .file-input label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .file-input input[type="file"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .download-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .download-link a {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .download-link a:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>文件合并工具</h1>
+        <div class="file-input">
+            <label for="imageFile">选择图片文件 (PNG, JPG, JPEG, WebP)</label>
+            <input type="file" id="imageFile" accept="image/png, image/jpeg, image/webp" />
+        </div>
+        <div class="file-input">
+            <label for="archiveFile">选择压缩文件 (ZIP, RAR)</label>
+            <input type="file" id="archiveFile" accept=".zip, .rar" />
+        </div>
+        <button id="mergeButton">合并文件</button>
+        <div class="download-link" id="downloadLinkContainer">
+            <a id="downloadLink" style="display: none;">下载合并后的文件</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('mergeButton').addEventListener('click', async () => {
+            const imageFile = document.getElementById('imageFile').files[0];
+            const archiveFile = document.getElementById('archiveFile').files[0];
+
+            if (!imageFile || !archiveFile) {
+                alert('请先选择图片文件和压缩文件');
+                return;
+            }
+
+            try {
+                // 读取图片文件内容
+                const imageArrayBuffer = await imageFile.arrayBuffer();
+                const imageData = new Uint8Array(imageArrayBuffer);
+
+                // 读取压缩文件内容
+                const archiveArrayBuffer = await archiveFile.arrayBuffer();
+                const archiveData = new Uint8Array(archiveArrayBuffer);
+
+                // 合并数据
+                const combinedData = new Uint8Array(imageData.length + archiveData.length);
+                combinedData.set(imageData);
+                combinedData.set(archiveData, imageData.length);
+
+                // 创建一个新的Blob对象
+                const blob = new Blob([combinedData], { type: 'application/octet-binary' });
+
+                // 创建下载链接
+                const downloadLink = document.getElementById('downloadLink');
+                downloadLink.href = URL.createObjectURL(blob);
+                downloadLink.download = 'merged_file.png'; // 可以根据需要修改文件名和扩展名
+                downloadLink.style.display = 'inline-block';
+                downloadLinkContainer.style.display = 'block';
+
+                // 自动触发下载
+                downloadLink.click();
+
+                // 释放对象URL
+                URL.revokeObjectURL(downloadLink.href);
+            } catch (error) {
+                console.error('发生错误:', error);
+                alert('文件合并失败');
+            }
+        });
+    </script>
+</body>
+</html>
