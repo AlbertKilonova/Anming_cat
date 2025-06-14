@@ -322,10 +322,13 @@
       const threshold = 5; // 触发方向变化的阈值设为5px
       if (Math.abs(dx) > threshold || Math.abs(dy) > threshold) {
         if (Math.abs(dx) > Math.abs(dy)) {
-          direction = dx > 0 ? 'right' : 'left';
+          newDir = dx > 0 ? 'right' : 'left';
         } else {
-          direction = dy > 0 ? 'down' : 'up';
+          newDir = dy > 0 ? 'down' : 'up';
         }
+        if (newDir && !isOpposite(newDir)) {
+            direction = newDir;
+          }
         // 更新初始触摸点，便于连续检测
         touchStartX = touchEndX;
         touchStartY = touchEndY;
